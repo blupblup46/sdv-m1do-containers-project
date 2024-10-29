@@ -1,0 +1,20 @@
+services:
+
+  api:
+    build:
+      context: ./sdv-api
+      target: dev
+    volumes:
+      - ./sdv-api:/app
+    command: cargo-watch -x run
+
+  web:
+    image: node:23.0.0-alpine
+    environment:
+      - API_URL=http://api:80
+    volumes:
+      - ./sdv-web:/app
+    ports:
+      - 3000:3000
+    working_dir: /app
+    command: /bin/sh -c "npm install & npm run dev"
