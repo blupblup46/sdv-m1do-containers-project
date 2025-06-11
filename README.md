@@ -27,6 +27,11 @@ execute une commande
 ### ENTRYPOINT et CMD
 commande a lancer à l'execution du conteneur ["cmd", "arg1", "arg2"]
 
+## DockerHub
+Normalement, le repo est publique et peut être accede à https://hub.docker.com/repositories/blupblup
+Sinon, voilà la capture d'écran qui prouve que les images ont été pushé correctement
+![dockerHub](./images/dockerHub.png)
+
 
 # Sup de Vinci - Containers module project
 

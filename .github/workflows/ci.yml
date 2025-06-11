@@ -1,6 +1,6 @@
-name: Docker Image CI
+name: Docker Image CI # nom de la pipeline
 
-on:
+on:                         # la pipeline ne se déclenche qu'en cas de push sur la branche main ou en cas de merge request sur main
   push:
     branches: [ "main" ]
   pull_request:
@@ -10,22 +10,34 @@ jobs:
 
   build-and-push:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest      # nom de l'image sur la quelle execution les commandes de la pipeline
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the API Docker image
+    - uses: actions/checkout@v4 # appelle du code d'un autre fichier de pipeline, un ficher publique. Cela permet de cloner le code du repo dans le conteneur ubuntu-latest
+
+
+    - name: Build the API Docker image    # build de l'image de l'api (avec --target pro l'iamge est construite en suivant les instruction à partir de la ligne FROM alpine:latest AS prod du dockerfile )
       working-directory: ./sdv-api
       run: docker build . --file Dockerfile --target prod --tag ${{ secrets.DOCKER_USERNAME }}/sdv-m1do-api:latest
-    - name: Build the Web Docker image
+
+
+    - name: Build the Web Docker image  # ici avaoir deux tags permet d'avoir un tag pour l'historique et un tag latest pour faciliter la mise à jour des environnements
       working-directory: ./sdv-web
       run: docker build . --file Dockerfile --tag sdv-m1do-web:$(date +%s) --tag ${{ secrets.DOCKER_USERNAME }}/sdv-m1do-web:latest
-    - name: Log in to Docker Hub
+
+
+    - name: Log in to Docker Hub                  # connection a docker hub avec les secrets définies dans github 
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Push API image to Docker Hub
+
+
+
+    - name: Push API image to Docker Hub    # push les deux images dans le docker hub (il faut que le access token soit bien scopé)
       run: docker push ${{ secrets.DOCKER_USERNAME }}/sdv-m1do-api:latest
+
+
+
     - name: Push WEB image to Docker Hub
       run: docker push ${{ secrets.DOCKER_USERNAME }}/sdv-m1do-web:latest
