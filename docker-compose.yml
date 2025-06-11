@@ -1,20 +1,32 @@
 services:
 
-  api:
-    build:
-      context: ./sdv-api
-      target: dev
+  api:                          # nom du service
+    build:                      
+      context: ./sdv-api        # Ici, on veut utiliser une image issue d'un dockerfile 
+      target: dev               # Le docker file est optimiser, on peut produire des images plus légères. ici, on veut l'image obtenue après l'étape FROM base AS dev du docker file
     volumes:
-      - ./sdv-api:/app
-    command: cargo-watch -x run
+      - ./sdv-api:/app          # on associe le répertoir du projet au conteneur pour pouvoir mettre à jour l'application après une modification du code
+    networks:
+      - net1
+    command: cargo-watch -x run # Après avoir build et démarré le conteneur, on exécute cette commande qui permet de surveiller les changement du code de l'application (code dans /app sur le conteneur, donc ./sdv-api en local grâce au volume)
 
-  web:
-    image: node:23.0.0-alpine
-    environment:
-      - API_URL=http://api:80
+
+  web:                                               # nom du service
+    image: node:23.0.0-alpine                        # spécifie quelle image utiliser
+    # entrypoint: ""
+    environment:                                     # Déclaration et initialisation d'une variable d'environnement qui permet de spécifier au conteneur front à quel port l'api écoute
+      - API_URL=http://api:8000
     volumes:
-      - ./sdv-web:/app
+      - ./sdv-web:/app                               # on associe le répertoir du projet au conteneur pour pouvoir mettre à jour l'application après une modification du code
     ports:
-      - 3000:3000
-    working_dir: /app
-    command: /bin/sh -c "npm install & npm run dev"
+      - 3000:3000                                    # on expose le port 3000 du conteneur et on l'associe au port 3000 de l'hote. Donc, si on contacte le port 3000 de l'hote on contact en fait le conteneur (et l'application front)
+
+    working_dir: /app                                 # équivalent d'un cd, on se place dans le répertoir /app
+    command: /bin/sh -c "npm install && npm run dev"   # Après avoir démarré le conteneur, on exécute cette commande qui permet d'installer tous les paquets et d'executer le script "dev" déclaré dans le fichier json ./sdv-web/package.json
+    networks: 
+      - net1  
+
+networks:
+  net1:
+    driver: bridge
+# Il manquait une section network, les conteneurs ne pouvaient pas communiquer entre eux

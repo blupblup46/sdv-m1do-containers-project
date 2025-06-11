@@ -1,8 +1,8 @@
 # Image de base
-FROM rust:1.82.0-alpine AS base
+FROM rust:1.82.0-alpine AS base 
 ARG pkg=sdv-api
 WORKDIR /app
-RUN apk add --no-cache musl-dev
+RUN apk add --no-cache musl-dev  
 
 
 # Image de dev

@@ -1,3 +1,33 @@
+# Explications
+
+## Préambule
+Pour pouvoir démarrer l'application, j'ai du supprimer tous les paquets de next du fichier /.sdv-web/package-lock.json
+J'ai également cré un network dans le docker compose pour pouvoir faire communiquer les deux conteneurs. J'ai finalement changé l'addresse de l' api de http://api:80 à http://api:8000
+
+
+## docker-compose
+Le fichier de docker compose est un fichier qui permet lancer toute la stack dans des conteneurs dockers
+J'ai rédigé plus d'explications directement dans le fichier
+
+## fichiers dockerfile
+### FROM
+sert de point de départ aux commandes qui vont être jouées. On peut partir d'une image existante ou de rien (FROM scratch)
+### ENV
+Permet de déclarer des variables d'environnement
+ 
+### WORKDIR 
+equivalent d'un cd, permet de se positionner dans un repertoire
+### COPY 
+copie un fichier/dossier de l'hote vers le conteneur. 
+
+Permet aussi de récupérer des dossiers/fichiers d'un autre conteneur du dockerfile (COPY --from <nom>). Cela permet de générer des images plus légère en compilant l'api rust dans un premier conteneur puis en ne récupérant que l'application compilée dans un autre en laissant derrière tous les outils lourds de compilations
+
+### RUN 
+execute une commande
+### ENTRYPOINT et CMD
+commande a lancer à l'execution du conteneur ["cmd", "arg1", "arg2"]
+
+
 # Sup de Vinci - Containers module project
 
 *Tested with `rust v1.82.0` et `node 23.0.0`.*
